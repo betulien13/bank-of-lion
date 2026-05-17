@@ -1,0 +1,1928 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BankOfLion — Seu banco simples e seguro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #1a7a4a;
+    --green-light: #e8f5ee;
+    --green-mid: #2ea56a;
+    --green-dark: #145c38;
+    --blue: #1a5fa8;
+    --blue-light: #e8f0fb;
+    --orange: #e07b20;
+    --orange-light: #fef3e7;
+    --red: #c0392b;
+    --red-light: #fdecea;
+    --gray-bg: #f5f6f8;
+    --gray-card: #ffffff;
+    --gray-border: #dce0e8;
+    --gray-text: #2c3345;
+    --gray-muted: #6b7280;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --font: 'Nunito', sans-serif;
+  }
+
+  /* Font scaling — controlled via html font-size (rem cascade) */
+  html { font-size: 18px; }
+  html.font-sm { font-size: 14px; }
+  html.font-md { font-size: 16px; }
+  html.font-lg { font-size: 20px; }
+  html.font-xl { font-size: 23px; }
+  html.font-xxl { font-size: 26px; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font);
+    font-size: 1rem;
+    background: var(--gray-bg);
+    color: var(--gray-text);
+    min-height: 100vh;
+  }
+
+  /* ACCESSIBILITY BAR */
+  .accessibility-bar {
+    background: var(--green-dark);
+    color: #fff;
+    padding: 8px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 14px;
+  }
+  .accessibility-bar span { font-weight: 600; margin-right: 4px; }
+  .acc-btn {
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.4);
+    color: #fff;
+    border-radius: 6px;
+    padding: 4px 12px;
+    cursor: pointer;
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.2s;
+  }
+  .acc-btn:hover { background: rgba(255,255,255,0.35); }
+  .acc-btn:focus { outline: 3px solid #ffe066; outline-offset: 2px; }
+
+  /* HEADER */
+  header {
+    background: #fff;
+    border-bottom: 2px solid var(--green-light);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 68px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--green);
+    text-decoration: none;
+  }
+  .logo-icon {
+    width: 40px; height: 40px;
+    background: var(--green);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-size: 22px;
+    font-weight: 800;
+  }
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    color: var(--gray-muted);
+  }
+  .user-avatar {
+    width: 40px; height: 40px;
+    background: var(--green-light);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800;
+    color: var(--green);
+    font-size: 15px;
+    border: 2px solid var(--green);
+  }
+  .logout-btn {
+    background: none;
+    border: 2px solid var(--gray-border);
+    color: var(--red);
+    border-radius: 8px;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 700;
+    transition: all 0.2s;
+  }
+  .logout-btn:hover { background: var(--red-light); border-color: var(--red); }
+
+  /* BREADCRUMB */
+  .breadcrumb {
+    background: var(--green-light);
+    border-bottom: 1px solid #c3e6d6;
+    padding: 10px 24px;
+    font-size: 14px;
+    color: var(--green-dark);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .breadcrumb svg { width: 16px; height: 16px; }
+
+  /* MAIN LAYOUT */
+  .app { display: flex; min-height: calc(100vh - 110px); }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 220px;
+    background: #fff;
+    border-right: 1px solid var(--gray-border);
+    padding: 24px 0;
+    flex-shrink: 0;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-family: var(--font);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--gray-muted);
+    width: 100%;
+    text-align: left;
+    border-left: 4px solid transparent;
+    transition: all 0.15s;
+  }
+  .nav-item:hover { background: var(--green-light); color: var(--green); }
+  .nav-item.active { background: var(--green-light); color: var(--green); border-left-color: var(--green); }
+  .nav-item:focus { outline: 3px solid var(--green); outline-offset: -2px; }
+  .nav-icon { font-size: 22px; width: 28px; text-align: center; }
+
+  /* CONTENT */
+  .content { flex: 1; padding: 28px 32px; max-width: 900px; }
+
+  /* SCREEN TITLE */
+  .screen-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--gray-text);
+    margin-bottom: 6px;
+  }
+  .screen-subtitle {
+    font-size: 16px;
+    color: var(--gray-muted);
+    margin-bottom: 28px;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--gray-card);
+    border-radius: var(--radius);
+    border: 1px solid var(--gray-border);
+    padding: 24px;
+    box-shadow: var(--shadow);
+  }
+  .card + .card { margin-top: 20px; }
+
+  /* BALANCE CARD */
+  .balance-card {
+    background: linear-gradient(135deg, var(--green) 0%, var(--green-mid) 100%);
+    color: #fff;
+    border-radius: var(--radius);
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .balance-card::after {
+    content: '';
+    position: absolute;
+    right: -40px; top: -40px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+  }
+  .balance-label { font-size: 15px; font-weight: 600; opacity: 0.85; margin-bottom: 6px; }
+  .balance-amount { font-size: 38px; font-weight: 800; letter-spacing: -0.5px; }
+  .balance-account { font-size: 13px; opacity: 0.75; margin-top: 8px; }
+  .eye-btn {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: #fff;
+    border-radius: 8px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: var(--font);
+    margin-top: 12px;
+    transition: background 0.2s;
+  }
+  .eye-btn:hover { background: rgba(255,255,255,0.3); }
+
+  /* QUICK ACTIONS */
+  .quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 14px;
+    margin-top: 20px;
+  }
+  .action-btn {
+    background: #fff;
+    border: 2px solid var(--gray-border);
+    border-radius: var(--radius);
+    padding: 20px 12px;
+    cursor: pointer;
+    font-family: var(--font);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--gray-text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s;
+    text-align: center;
+    line-height: 1.3;
+  }
+  .action-btn:hover { border-color: var(--green); color: var(--green); background: var(--green-light); transform: translateY(-2px); box-shadow: 0 4px 14px rgba(26,122,74,0.15); }
+  .action-btn:focus { outline: 3px solid var(--green); outline-offset: 2px; }
+  .action-btn .icon { font-size: 30px; }
+
+  /* TRANSACTIONS */
+  .tx-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--gray-border);
+  }
+  .tx-item:last-child { border-bottom: none; }
+  .tx-icon {
+    width: 46px; height: 46px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .tx-icon.in { background: #e8f5ee; }
+  .tx-icon.out { background: #fef3e7; }
+  .tx-icon.pay { background: #e8f0fb; }
+  .tx-desc { flex: 1; }
+  .tx-desc strong { font-size: 16px; font-weight: 700; display: block; }
+  .tx-desc span { font-size: 14px; color: var(--gray-muted); }
+  .tx-amount { font-size: 17px; font-weight: 800; }
+  .tx-amount.in { color: var(--green); }
+  .tx-amount.out { color: var(--orange); }
+  .tx-amount.pay { color: var(--blue); }
+
+  /* FORM */
+  .form-group { margin-bottom: 20px; }
+  .form-label {
+    display: block;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--gray-text);
+    margin-bottom: 8px;
+  }
+  .form-hint { font-size: 13px; color: var(--gray-muted); margin-top: 4px; }
+  .form-input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid var(--gray-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font);
+    font-size: 17px;
+    color: var(--gray-text);
+    transition: border-color 0.2s;
+    background: #fff;
+  }
+  .form-input:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(26,122,74,0.15); }
+  .form-input.error { border-color: var(--red); }
+  .error-msg { color: var(--red); font-size: 13px; font-weight: 600; margin-top: 4px; display: none; }
+  .error-msg.show { display: block; }
+
+  .submit-btn {
+    background: var(--green);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 16px 32px;
+    font-family: var(--font);
+    font-size: 18px;
+    font-weight: 800;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .submit-btn:hover { background: var(--green-dark); transform: translateY(-1px); }
+  .submit-btn:focus { outline: 3px solid var(--green); outline-offset: 3px; }
+  .submit-btn:disabled { background: var(--gray-muted); cursor: not-allowed; transform: none; }
+  .submit-btn-secondary {
+    background: #fff;
+    color: var(--green);
+    border: 2px solid var(--green);
+    border-radius: var(--radius-sm);
+    padding: 14px 28px;
+    font-family: var(--font);
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .submit-btn-secondary:hover { background: var(--green-light); }
+
+  /* TOAST */
+  .toast-container { position: fixed; bottom: 28px; right: 28px; z-index: 1000; display: flex; flex-direction: column; gap: 10px; }
+  .toast {
+    background: #fff;
+    border-radius: var(--radius-sm);
+    padding: 16px 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    border-left: 5px solid var(--green);
+    min-width: 300px;
+    max-width: 380px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    animation: slideIn 0.3s ease;
+  }
+  .toast.error { border-left-color: var(--red); }
+  .toast.warning { border-left-color: var(--orange); }
+  .toast-icon { font-size: 22px; }
+  .toast-msg { flex: 1; line-height: 1.4; }
+  @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+  /* PIX KEY SELECTOR */
+  .pix-key-options {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .pix-key-btn {
+    padding: 10px 18px;
+    border: 2px solid var(--gray-border);
+    background: #fff;
+    border-radius: 24px;
+    font-family: var(--font);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--gray-text);
+  }
+  .pix-key-btn.selected { background: var(--green); border-color: var(--green); color: #fff; }
+  .pix-key-btn:hover:not(.selected) { border-color: var(--green); color: var(--green); }
+
+  /* CREDIT CARD */
+  .credit-card-visual {
+    background: linear-gradient(135deg, #1a5fa8 0%, #2475c8 100%);
+    border-radius: 18px;
+    padding: 28px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    max-width: 380px;
+  }
+  .credit-card-visual::after {
+    content: '';
+    position: absolute;
+    right: -30px; bottom: -40px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+  }
+  .card-chip { font-size: 28px; margin-bottom: 16px; }
+  .card-number { font-size: 17px; letter-spacing: 3px; font-weight: 600; margin-bottom: 14px; }
+  .card-details { display: flex; justify-content: space-between; font-size: 13px; opacity: 0.8; }
+  .card-limit-bar { height: 10px; border-radius: 5px; background: rgba(255,255,255,0.25); margin-top: 4px; overflow: hidden; }
+  .card-limit-fill { height: 100%; border-radius: 5px; background: #fff; transition: width 0.5s; }
+
+  /* PROGRESS STEPS */
+  .steps {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+  .step {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800;
+    font-size: 14px;
+    border: 2px solid var(--gray-border);
+    color: var(--gray-muted);
+    background: #fff;
+  }
+  .step.active { background: var(--green); border-color: var(--green); color: #fff; }
+  .step.done { background: var(--green-light); border-color: var(--green); color: var(--green); }
+  .step-line { flex: 1; height: 2px; background: var(--gray-border); }
+  .step-line.done { background: var(--green); }
+
+  /* BADGE */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .badge.success { background: var(--green-light); color: var(--green); }
+  .badge.warning { background: var(--orange-light); color: var(--orange); }
+  .badge.info { background: var(--blue-light); color: var(--blue); }
+  .badge.demo { background: #fff3e0; color: #e65100; }
+
+  /* LOGIN SCREEN */
+  .login-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: var(--green-light);
+    padding: 24px;
+  }
+  .login-box {
+    background: #fff;
+    border-radius: 24px;
+    padding: 40px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.1);
+  }
+  .login-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--green);
+    margin-bottom: 8px;
+  }
+  .login-tagline { color: var(--gray-muted); font-size: 15px; margin-bottom: 32px; }
+  .tab-bar {
+    display: flex;
+    gap: 4px;
+    background: var(--gray-bg);
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 24px;
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--font);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    background: none;
+    color: var(--gray-muted);
+    transition: all 0.2s;
+  }
+  .tab-btn.active { background: #fff; color: var(--green); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+  .demo-accounts-list { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+  .demo-acc-btn {
+    background: var(--green-light);
+    border: 2px solid #b8dfc9;
+    border-radius: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    font-family: var(--font);
+    text-align: left;
+    transition: all 0.2s;
+    font-size: 15px;
+  }
+  .demo-acc-btn:hover { border-color: var(--green); background: #d5eee0; }
+  .demo-acc-btn strong { color: var(--green-dark); font-weight: 800; display: block; font-size: 16px; }
+  .demo-acc-btn span { color: var(--gray-muted); font-size: 13px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 700px) {
+    .sidebar { display: none; }
+    .content { padding: 20px 16px; }
+    .quick-actions { grid-template-columns: repeat(2, 1fr); }
+    .balance-amount { font-size: 30px; }
+    .credit-card-visual { max-width: 100%; }
+  }
+
+  /* HIGH CONTRAST */
+  body.high-contrast {
+    --green: #005c2e;
+    --green-light: #c2f0d6;
+    --gray-muted: #374151;
+    --gray-border: #9ca3af;
+    --gray-bg: #e8e8e8;
+    background: #e8e8e8;
+  }
+  body.high-contrast .form-input { border-width: 3px; }
+  body.high-contrast .action-btn { border-width: 3px; }
+  body.high-contrast .card { border-width: 2px; }
+  body.high-contrast .nav-item { border-left-width: 5px; }
+
+  /* DARK MODE */
+  body.dark-mode {
+    --gray-bg: #1a1c23;
+    --gray-card: #252830;
+    --gray-border: #383c4a;
+    --gray-text: #e8eaf0;
+    --gray-muted: #9ba3af;
+    --green-light: #0d3320;
+    --blue-light: #0d1f3a;
+    --orange-light: #2e1800;
+    --red-light: #2e0b0b;
+    background: #1a1c23;
+  }
+  body.dark-mode .sidebar { background: #252830; }
+  body.dark-mode header { background: #252830; border-color: #383c4a; }
+  body.dark-mode .form-input { background: #1a1c23; color: #e8eaf0; }
+  body.dark-mode .pix-key-btn { background: #1a1c23; color: #e8eaf0; }
+  body.dark-mode .action-btn { background: #252830; color: #e8eaf0; }
+  body.dark-mode .tab-bar { background: #1a1c23; }
+  body.dark-mode .tab-btn.active { background: #252830; }
+  body.dark-mode .login-box { background: #252830; }
+  body.dark-mode .login-screen { background: #1a1c23; }
+  body.dark-mode .toast { background: #252830; color: #e8eaf0; }
+  body.dark-mode .mobile-nav { background: #252830; border-color: #383c4a; }
+
+  /* NARRATOR BUTTON — floats in corner of every screen */
+  .narrator-fab {
+    position: fixed;
+    bottom: 90px;
+    right: 22px;
+    z-index: 500;
+    background: #7c3aed;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 14px 20px;
+    font-family: var(--font);
+    font-size: 0.85rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(124,58,237,0.4);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+  .narrator-fab:hover { background: #6d28d9; transform: scale(1.05); }
+  .narrator-fab:focus { outline: 3px solid #ffe066; outline-offset: 3px; }
+  .narrator-fab.speaking { background: #dc2626; animation: pulse-narrator 1s infinite; }
+  @keyframes pulse-narrator { 0%,100% { box-shadow: 0 4px 16px rgba(220,38,38,0.4); } 50% { box-shadow: 0 4px 28px rgba(220,38,38,0.7); } }
+
+  /* ACCESSIBILITY SCREEN */
+  .acc-option-card {
+    background: #fff;
+    border: 2px solid var(--gray-border);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    transition: border-color 0.2s;
+  }
+  body.dark-mode .acc-option-card { background: #252830; }
+  .acc-option-card:hover { border-color: var(--green); }
+  .acc-option-info { flex: 1; }
+  .acc-option-info h3 { font-size: 1rem; font-weight: 800; color: var(--gray-text); margin-bottom: 4px; }
+  .acc-option-info p { font-size: 0.8rem; color: var(--gray-muted); line-height: 1.4; }
+  .font-size-controls { display: flex; align-items: center; gap: 10px; }
+  .font-size-btn {
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    border: 2px solid var(--gray-border);
+    background: #fff;
+    color: var(--gray-text);
+    font-family: var(--font);
+    font-weight: 800;
+    cursor: pointer;
+    font-size: 1.1rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  body.dark-mode .font-size-btn { background: #1a1c23; color: #e8eaf0; }
+  .font-size-btn:hover { background: var(--green); border-color: var(--green); color: #fff; }
+  .font-size-btn:focus { outline: 3px solid var(--green); outline-offset: 2px; }
+  .font-level-display { font-size: 1rem; font-weight: 800; color: var(--green); min-width: 80px; text-align: center; }
+  .toggle-switch {
+    width: 60px; height: 32px;
+    border-radius: 16px;
+    background: var(--gray-border);
+    cursor: pointer;
+    border: none;
+    position: relative;
+    transition: background 0.25s;
+    flex-shrink: 0;
+  }
+  .toggle-switch::after {
+    content: '';
+    position: absolute;
+    left: 3px; top: 3px;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform 0.25s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+  .toggle-switch.on { background: var(--green); }
+  .toggle-switch.on::after { transform: translateX(28px); }
+  .toggle-switch:focus { outline: 3px solid var(--green); outline-offset: 2px; }
+  .color-scheme-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+  .color-scheme-btn {
+    border: 3px solid var(--gray-border);
+    border-radius: 12px;
+    padding: 14px 8px;
+    cursor: pointer;
+    font-family: var(--font);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-align: center;
+    transition: all 0.2s;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+  .color-scheme-btn.active { border-color: var(--green); background: var(--green-light); color: var(--green); }
+  .color-scheme-btn:hover:not(.active) { border-color: var(--green); }
+  .scheme-swatch { width: 36px; height: 36px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); }
+  .speed-controls { display: flex; gap: 8px; }
+  .speed-btn {
+    flex: 1;
+    padding: 10px 8px;
+    border: 2px solid var(--gray-border);
+    background: #fff;
+    border-radius: 10px;
+    font-family: var(--font);
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--gray-text);
+  }
+  body.dark-mode .speed-btn { background: #1a1c23; color: #e8eaf0; }
+  .speed-btn.active { background: #7c3aed; border-color: #7c3aed; color: #fff; }
+  .speed-btn:hover:not(.active) { border-color: #7c3aed; color: #7c3aed; }
+
+  /* CONFIRMATION BOX */
+  .confirm-box {
+    background: var(--green-light);
+    border: 2px solid var(--green);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+  .confirm-box h3 { color: var(--green-dark); font-size: 16px; margin-bottom: 10px; }
+  .confirm-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #c3e6d6; font-size: 15px; }
+  .confirm-row:last-child { border-bottom: none; font-weight: 700; }
+  .confirm-row span:last-child { font-weight: 700; }
+
+  /* SKELETON */
+  .skeleton { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; }
+  @keyframes shimmer { to { background-position: -200% 0; } }
+
+  /* MOBILE NAV */
+  .mobile-nav {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: #fff;
+    border-top: 1px solid var(--gray-border);
+    padding: 8px 0;
+    z-index: 100;
+  }
+  .mobile-nav-inner { display: flex; justify-content: space-around; }
+  .mobile-nav-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    background: none; border: none; cursor: pointer;
+    font-family: var(--font); font-size: 11px; font-weight: 700; color: var(--gray-muted);
+    padding: 8px 12px;
+  }
+  .mobile-nav-btn.active { color: var(--green); }
+  .mobile-nav-btn .icon { font-size: 22px; }
+  @media (max-width: 700px) { .mobile-nav { display: block; } .content { padding-bottom: 80px; } }
+</style>
+</head>
+<body>
+
+<!-- TOAST AREA -->
+<div class="toast-container" id="toastArea" aria-live="polite"></div>
+
+<!-- LOGIN SCREEN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="logo-icon">B</div>
+      BankOfLion
+    </div>
+    <p class="login-tagline">Seu banco simples, seguro e acolhedor 💚</p>
+
+    <div class="tab-bar" role="tablist">
+      <button class="tab-btn active" role="tab" onclick="switchTab('login')" id="tab-login" aria-selected="true">Entrar</button>
+      <button class="tab-btn" role="tab" onclick="switchTab('cadastro')" id="tab-cadastro" aria-selected="false">Criar conta</button>
+      <button class="tab-btn" role="tab" onclick="switchTab('demo')" id="tab-demo" aria-selected="false">Conta Demo</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div id="panel-login">
+      <div class="form-group">
+        <label class="form-label" for="loginCpf">📋 Seu CPF</label>
+        <input class="form-input" id="loginCpf" type="text" placeholder="000.000.000-00" maxlength="14" oninput="maskCPF(this)" autocomplete="username">
+        <p class="form-hint">Somente números</p>
+        <p class="error-msg" id="loginCpfErr">Por favor, informe um CPF válido.</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="loginSenha">🔐 Sua senha</label>
+        <input class="form-input" id="loginSenha" type="password" placeholder="Digite sua senha" autocomplete="current-password">
+        <p class="form-hint">Mínimo de 4 dígitos</p>
+        <p class="error-msg" id="loginSenhaErr">Por favor, informe sua senha.</p>
+      </div>
+      <button class="submit-btn" onclick="doLogin()">▶ Entrar na minha conta</button>
+      <p style="text-align:center; margin-top: 14px; font-size: 14px; color: var(--gray-muted);">Esqueceu a senha? <a href="#" style="color:var(--green); font-weight:700;" onclick="showToast('Funcionalidade disponível em breve.', 'info'); return false;">Clique aqui</a></p>
+    </div>
+
+    <!-- CADASTRO FORM -->
+    <div id="panel-cadastro" style="display:none">
+      <div class="form-group">
+        <label class="form-label" for="regNome">👤 Seu nome completo</label>
+        <input class="form-input" id="regNome" type="text" placeholder="Ex: Maria da Silva" autocomplete="name">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="regCpf">📋 Seu CPF</label>
+        <input class="form-input" id="regCpf" type="text" placeholder="000.000.000-00" maxlength="14" oninput="maskCPF(this)">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="regSenha">🔐 Crie uma senha</label>
+        <input class="form-input" id="regSenha" type="password" placeholder="Mínimo 4 dígitos" minlength="4">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="regEmail">📧 Seu e-mail</label>
+        <input class="form-input" id="regEmail" type="email" placeholder="seu@email.com" autocomplete="email">
+      </div>
+      <button class="submit-btn" onclick="doRegistro()">✅ Criar minha conta</button>
+    </div>
+
+    <!-- DEMO -->
+    <div id="panel-demo" style="display:none">
+      <p style="font-size:15px; color:var(--gray-muted); margin-bottom:12px;">Escolha uma conta de teste para explorar o banco sem usar dados reais:</p>
+      <div class="demo-accounts-list">
+        <button class="demo-acc-btn" onclick="loginDemo(0)">
+          <strong>👵 Maria da Silva, 68 anos</strong>
+          <span>Saldo: R$ 3.450,00 · Aposentada</span>
+        </button>
+        <button class="demo-acc-btn" onclick="loginDemo(1)">
+          <strong>👨 João Pereira, 72 anos</strong>
+          <span>Saldo: R$ 8.920,00 · Aposentado</span>
+        </button>
+        <button class="demo-acc-btn" onclick="loginDemo(2)">
+          <strong>👩 Ana Lima, 55 anos</strong>
+          <span>Saldo: R$ 15.300,00 · Servidora pública</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NARRATOR FAB — visible on all screens -->
+<button class="narrator-fab" id="narratorFab" onclick="toggleNarrator()" aria-label="Narrador de tela — clique para ouvir o conteúdo desta tela" style="display:none;">
+  🔊 <span id="narratorFabLabel">Narrador</span>
+</button>
+
+<!-- MAIN APP -->
+<div id="mainApp" style="display:none">
+
+  <header>
+    <a href="#" class="logo" onclick="navigate('inicio'); return false;" aria-label="BankOfLion - Ir para o início">
+      <div class="logo-icon">B</div>
+      BankOfLion
+    </a>
+    <div class="user-info">
+      <span id="headerGreeting" style="font-weight:600; color:var(--gray-text)"></span>
+      <div class="user-avatar" id="userAvatar">M</div>
+      <button class="logout-btn" onclick="doLogout()">🚪 Sair</button>
+    </div>
+  </header>
+
+  <div class="breadcrumb" id="breadcrumb" role="navigation" aria-label="Você está na tela">
+    📍 Você está na tela: <strong id="breadcrumbLabel">Início</strong>
+  </div>
+
+  <div class="app">
+    <nav class="sidebar" aria-label="Menu principal">
+      <button class="nav-item active" onclick="navigate('inicio')" id="nav-inicio" aria-current="page">
+        <span class="nav-icon">🏠</span> Início
+      </button>
+      <button class="nav-item" onclick="navigate('pix')" id="nav-pix">
+        <span class="nav-icon">⚡</span> PIX
+      </button>
+      <button class="nav-item" onclick="navigate('extrato')" id="nav-extrato">
+        <span class="nav-icon">📋</span> Extrato
+      </button>
+      <button class="nav-item" onclick="navigate('cartao')" id="nav-cartao">
+        <span class="nav-icon">💳</span> Cartão
+      </button>
+      <button class="nav-item" onclick="navigate('transferir')" id="nav-transferir">
+        <span class="nav-icon">↔️</span> Transferir
+      </button>
+      <button class="nav-item" onclick="navigate('pagar')" id="nav-pagar">
+        <span class="nav-icon">📄</span> Pagar conta
+      </button>
+      <button class="nav-item" onclick="navigate('recarga')" id="nav-recarga">
+        <span class="nav-icon">📱</span> Recarga
+      </button>
+      <div style="height:1px;background:var(--gray-border);margin:12px 16px;"></div>
+      <button class="nav-item" onclick="navigate('acessibilidade')" id="nav-acessibilidade">
+        <span class="nav-icon">♿</span> Acessibilidade
+      </button>
+    </nav>
+
+    <main class="content" id="mainContent" role="main" tabindex="-1">
+      <!-- Rendered dynamically -->
+    </main>
+  </div>
+
+  <!-- MOBILE NAV -->
+  <nav class="mobile-nav" aria-label="Menu mobile">
+    <div class="mobile-nav-inner">
+      <button class="mobile-nav-btn active" onclick="navigate('inicio')" id="mnav-inicio"><span class="icon">🏠</span>Início</button>
+      <button class="mobile-nav-btn" onclick="navigate('pix')" id="mnav-pix"><span class="icon">⚡</span>PIX</button>
+      <button class="mobile-nav-btn" onclick="navigate('extrato')" id="mnav-extrato"><span class="icon">📋</span>Extrato</button>
+      <button class="mobile-nav-btn" onclick="navigate('cartao')" id="mnav-cartao"><span class="icon">💳</span>Cartão</button>
+      <button class="mobile-nav-btn" onclick="navigate('acessibilidade')" id="mnav-acessibilidade"><span class="icon">♿</span>Acesso</button>
+    </div>
+  </nav>
+</div>
+
+<script>
+// ==================== STATE ====================
+const DEMO_ACCOUNTS = [
+  {
+    nome: 'Maria da Silva', cpf: '123.456.789-00', senha: '1234',
+    saldo: 3450.00, agencia: '0001', conta: '12345-6',
+    pix_key: '123.456.789-00',
+    transactions: [
+      { id:1, tipo:'in', desc:'Aposentadoria INSS', valor: 1412.00, data:'2025-05-01', icon:'💰' },
+      { id:2, tipo:'out', desc:'Supermercado Extra', valor: -245.80, data:'2025-05-03', icon:'🛒' },
+      { id:3, tipo:'pay', desc:'Conta de Luz', valor: -87.50, data:'2025-05-05', icon:'💡' },
+      { id:4, tipo:'in', desc:'PIX recebido - João', valor: 200.00, data:'2025-05-08', icon:'⚡' },
+      { id:5, tipo:'out', desc:'Farmácia', valor: -56.30, data:'2025-05-10', icon:'💊' },
+      { id:6, tipo:'pay', desc:'Telefone fixo', valor: -49.90, data:'2025-05-12', icon:'📞' },
+    ],
+    card: { numero:'**** **** **** 1234', limite: 2000.00, usado: 487.50, vencimento:'10/2027', fatura: [
+      { desc:'Farmácia Drogasil', valor: 87.50, data:'2025-05-02' },
+      { desc:'Padaria Pão de Ouro', valor: 35.00, data:'2025-05-04' },
+      { desc:'Internet', valor: 99.90, data:'2025-05-06' },
+      { desc:'Consulta médica', valor: 265.10, data:'2025-05-09' },
+    ]}
+  },
+  {
+    nome: 'João Pereira', cpf: '987.654.321-00', senha: '5678',
+    saldo: 8920.00, agencia: '0001', conta: '67890-1',
+    pix_key: '987.654.321-00',
+    transactions: [
+      { id:1, tipo:'in', desc:'Aposentadoria INSS', valor: 2200.00, data:'2025-05-01', icon:'💰' },
+      { id:2, tipo:'out', desc:'Mercado Municipal', valor: -380.00, data:'2025-05-04', icon:'🛒' },
+      { id:3, tipo:'pay', desc:'Água e Esgoto', valor: -65.00, data:'2025-05-06', icon:'🚰' },
+      { id:4, tipo:'in', desc:'Rendimento CDB', valor: 120.50, data:'2025-05-09', icon:'📈' },
+      { id:5, tipo:'out', desc:'Pet Shop', valor: -95.00, data:'2025-05-11', icon:'🐾' },
+    ],
+    card: { numero:'**** **** **** 5678', limite: 5000.00, usado: 1240.00, vencimento:'03/2028', fatura: [
+      { desc:'Restaurante Bom Sabor', valor: 120.00, data:'2025-05-05' },
+      { desc:'Gasolina', valor: 380.00, data:'2025-05-07' },
+      { desc:'Streaming TV', valor: 55.90, data:'2025-05-08' },
+      { desc:'Academia', valor: 89.90, data:'2025-05-10' },
+      { desc:'Farmácia', valor: 594.20, data:'2025-05-12' },
+    ]}
+  },
+  {
+    nome: 'Ana Lima', cpf: '555.444.333-00', senha: '9012',
+    saldo: 15300.00, agencia: '0002', conta: '99887-7',
+    pix_key: 'ana.lima@email.com',
+    transactions: [
+      { id:1, tipo:'in', desc:'Salário', valor: 4800.00, data:'2025-05-05', icon:'💰' },
+      { id:2, tipo:'out', desc:'Aluguel', valor: -1500.00, data:'2025-05-06', icon:'🏠' },
+      { id:3, tipo:'pay', desc:'Plano de Saúde', valor: -420.00, data:'2025-05-07', icon:'🏥' },
+      { id:4, tipo:'out', desc:'Supermercado', valor: -560.00, data:'2025-05-09', icon:'🛒' },
+      { id:5, tipo:'in', desc:'Freelance Design', valor: 1200.00, data:'2025-05-12', icon:'💻' },
+    ],
+    card: { numero:'**** **** **** 9012', limite: 8000.00, usado: 2350.00, vencimento:'06/2029', fatura: [
+      { desc:'Passagem aérea', valor: 890.00, data:'2025-05-06' },
+      { desc:'Hotel reserva', valor: 450.00, data:'2025-05-07' },
+      { desc:'Roupa e acessórios', valor: 380.00, data:'2025-05-08' },
+      { desc:'Restaurante', valor: 185.00, data:'2025-05-10' },
+      { desc:'Uber', valor: 95.00, data:'2025-05-11' },
+      { desc:'Aplicativo musica', valor: 21.90, data:'2025-05-12' },
+      { desc:'Cafeteria', valor: 328.10, data:'2025-05-13' },
+    ]}
+  }
+];
+
+let currentUser = null;
+let currentScreen = 'inicio';
+let balanceVisible = true;
+let pixStep = 1;
+let pixData = {};
+let nextTxId = 100;
+
+// ==================== ACCESSIBILITY STATE ====================
+const fontClasses = ['font-sm','font-md','','font-lg','font-xl','font-xxl'];
+const fontLabels  = ['Muito pequena','Pequena','Normal','Grande','Muito grande','Enorme'];
+let fontLevel = 2; // default = index 2 = '' = 18px
+let highContrast = false;
+let darkMode = false;
+let narratorSpeed = 1.0;
+let currentUtterance = null;
+let narratorActive = false;
+
+function applyFontLevel(level) {
+  fontLevel = Math.max(0, Math.min(5, level));
+  document.documentElement.classList.remove(...fontClasses.filter(c=>c));
+  if (fontClasses[fontLevel]) document.documentElement.classList.add(fontClasses[fontLevel]);
+  // Update display if on accessibility screen
+  const disp = document.getElementById('fontLevelDisplay');
+  if (disp) disp.textContent = fontLabels[fontLevel];
+  const bar = document.getElementById('fontLevelBar');
+  if (bar) bar.style.width = ((fontLevel/5)*100)+'%';
+}
+function changeFontSize(dir) {
+  applyFontLevel(fontLevel + dir);
+  showToast(dir > 0 ? '🔤 Letra aumentada — ' + fontLabels[fontLevel] : '🔤 Letra reduzida — ' + fontLabels[fontLevel], 'info');
+}
+function toggleContrast() {
+  highContrast = !highContrast;
+  document.body.classList.toggle('high-contrast', highContrast);
+  if (highContrast) { darkMode = false; document.body.classList.remove('dark-mode'); }
+  showToast(highContrast ? '◐ Alto contraste ativado' : '◐ Alto contraste desativado', 'info');
+  updateAccToggles();
+}
+function toggleDarkMode() {
+  darkMode = !darkMode;
+  document.body.classList.toggle('dark-mode', darkMode);
+  if (darkMode) { highContrast = false; document.body.classList.remove('high-contrast'); }
+  showToast(darkMode ? '🌙 Modo escuro ativado' : '☀️ Modo claro ativado', 'info');
+  updateAccToggles();
+}
+function updateAccToggles() {
+  const tc = document.getElementById('toggleContrast');
+  if (tc) { tc.classList.toggle('on', highContrast); tc.setAttribute('aria-checked', highContrast); }
+  const td = document.getElementById('toggleDark');
+  if (td) { td.classList.toggle('on', darkMode); td.setAttribute('aria-checked', darkMode); }
+}
+function setNarratorSpeed(spd, el) {
+  narratorSpeed = spd;
+  document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+  if (el) el.classList.add('active');
+  showToast('🔊 Velocidade: ' + (spd===0.7?'Lenta':spd===1.0?'Normal':'Rápida'), 'info');
+}
+
+// ==================== NARRATOR ====================
+function getScreenText() {
+  const content = document.getElementById('mainContent');
+  if (!content) return '';
+  // Build a clean reading text from the screen
+  const screen = currentScreen;
+  const labels = { inicio:'Tela Início.', pix:'Tela PIX.', extrato:'Tela Extrato.', cartao:'Tela Cartão de Crédito.', transferir:'Tela Transferir.', pagar:'Tela Pagar conta.', recarga:'Tela Recarga de celular.', acessibilidade:'Tela de Acessibilidade.' };
+  let intro = (labels[screen] || '') + ' ';
+
+  // Walk text nodes, skip hidden and icon-only elements
+  let parts = [];
+  function walk(node) {
+    if (node.nodeType === 3) {
+      const t = node.textContent.trim();
+      if (t.length > 1 && !/^[^\w\sÀ-ÿ]+$/.test(t)) parts.push(t);
+    } else if (node.nodeType === 1) {
+      const tag = node.tagName;
+      if (['SCRIPT','STYLE','BUTTON'].includes(tag)) return; // skip buttons (read separately)
+      if (node.getAttribute('aria-hidden') === 'true') return;
+      node.childNodes.forEach(walk);
+    }
+  }
+  walk(content);
+
+  // Also grab button labels
+  let btns = [];
+  content.querySelectorAll('button:not([disabled])').forEach(b => {
+    const lbl = (b.getAttribute('aria-label') || b.textContent).trim().replace(/\s+/g,' ');
+    if (lbl.length > 1) btns.push(lbl);
+  });
+
+  let text = intro + parts.join('. ').replace(/\.{2,}/g,'.') + (btns.length ? ' Botões disponíveis: ' + btns.join(', ') + '.' : '');
+  return text.slice(0, 2000); // cap to avoid very long speeches
+}
+
+function toggleNarrator() {
+  if (narratorActive) {
+    stopNarrator();
+  } else {
+    startNarrator();
+  }
+}
+
+function startNarrator() {
+  if (!('speechSynthesis' in window)) {
+    showToast('Narrador não disponível neste navegador. Tente Chrome ou Edge.', 'error');
+    return;
+  }
+  stopNarrator();
+  const text = getScreenText();
+  if (!text.trim()) { showToast('Nenhum conteúdo para narrar nesta tela.', 'warning'); return; }
+
+  currentUtterance = new SpeechSynthesisUtterance(text);
+  currentUtterance.lang = 'pt-BR';
+  currentUtterance.rate = narratorSpeed;
+  currentUtterance.pitch = 1.05;
+  currentUtterance.volume = 1;
+
+  // Try to use a pt-BR voice
+  const voices = window.speechSynthesis.getVoices();
+  const ptVoice = voices.find(v => v.lang.startsWith('pt')) || voices.find(v => v.lang.startsWith('pt-BR'));
+  if (ptVoice) currentUtterance.voice = ptVoice;
+
+  currentUtterance.onstart = () => {
+    narratorActive = true;
+    const fab = document.getElementById('narratorFab');
+    if (fab) { fab.classList.add('speaking'); document.getElementById('narratorFabLabel').textContent = 'Parar'; }
+  };
+  currentUtterance.onend = currentUtterance.onerror = () => {
+    narratorActive = false;
+    const fab = document.getElementById('narratorFab');
+    if (fab) { fab.classList.remove('speaking'); document.getElementById('narratorFabLabel').textContent = 'Narrador'; }
+  };
+
+  window.speechSynthesis.speak(currentUtterance);
+}
+
+function stopNarrator() {
+  window.speechSynthesis.cancel();
+  narratorActive = false;
+  const fab = document.getElementById('narratorFab');
+  if (fab) { fab.classList.remove('speaking'); document.getElementById('narratorFabLabel').textContent = 'Narrador'; }
+}
+
+// Load voices async (Chrome needs this)
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
+}
+
+// ==================== MASKS ====================
+function maskCPF(input) {
+  let v = input.value.replace(/\D/g,'');
+  if (v.length > 11) v = v.slice(0,11);
+  v = v.replace(/(\d{3})(\d)/,'$1.$2');
+  v = v.replace(/(\d{3})(\d)/,'$1.$2');
+  v = v.replace(/(\d{3})(\d{1,2})$/,'$1-$2');
+  input.value = v;
+}
+function maskPhone(input) {
+  let v = input.value.replace(/\D/g,'');
+  if (v.length > 11) v = v.slice(0,11);
+  v = v.replace(/^(\d{2})(\d)/,'($1) $2');
+  v = v.replace(/(\d{5})(\d)/,'$1-$2');
+  input.value = v;
+}
+function maskBarcode(input) {
+  let v = input.value.replace(/\D/g,'');
+  input.value = v;
+}
+function fmtMoney(v) {
+  return 'R$ ' + Math.abs(v).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+}
+function fmtDate(d) {
+  const [y,m,dd] = d.split('-');
+  return dd + '/' + m + '/' + y;
+}
+
+// ==================== TOAST ====================
+function showToast(msg, type='success') {
+  const area = document.getElementById('toastArea');
+  const icons = { success:'✅', error:'❌', info:'ℹ️', warning:'⚠️' };
+  const t = document.createElement('div');
+  t.className = 'toast ' + (type === 'error' ? 'error' : type === 'warning' ? 'warning' : '');
+  t.innerHTML = `<span class="toast-icon">${icons[type]||'ℹ️'}</span><span class="toast-msg">${msg}</span>`;
+  t.setAttribute('role','alert');
+  area.appendChild(t);
+  setTimeout(() => { t.style.transition='opacity 0.4s'; t.style.opacity='0'; setTimeout(()=>t.remove(),400); }, 3500);
+}
+
+// ==================== AUTH ====================
+function switchTab(tab) {
+  ['login','cadastro','demo'].forEach(t => {
+    document.getElementById('panel-'+t).style.display = t===tab ? '' : 'none';
+    const btn = document.getElementById('tab-'+t);
+    btn.classList.toggle('active', t===tab);
+    btn.setAttribute('aria-selected', t===tab);
+  });
+}
+
+function doLogin() {
+  const cpf = document.getElementById('loginCpf').value.trim();
+  const senha = document.getElementById('loginSenha').value.trim();
+  let valid = true;
+  if (!cpf || cpf.length < 14) { document.getElementById('loginCpfErr').classList.add('show'); valid=false; } else document.getElementById('loginCpfErr').classList.remove('show');
+  if (!senha) { document.getElementById('loginSenhaErr').classList.add('show'); valid=false; } else document.getElementById('loginSenhaErr').classList.remove('show');
+  if (!valid) return;
+  const user = DEMO_ACCOUNTS.find(u => u.cpf === cpf && u.senha === senha);
+  if (!user) { showToast('CPF ou senha incorretos. Tente novamente.', 'error'); return; }
+  enterApp(user);
+}
+
+function doRegistro() {
+  const nome = document.getElementById('regNome').value.trim();
+  const cpf = document.getElementById('regCpf').value.trim();
+  const senha = document.getElementById('regSenha').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  if (!nome || !cpf || !senha || !email) { showToast('Por favor, preencha todos os campos.', 'warning'); return; }
+  if (cpf.length < 14) { showToast('CPF inválido. Verifique o número informado.', 'error'); return; }
+  if (senha.length < 4) { showToast('A senha precisa ter pelo menos 4 dígitos.', 'error'); return; }
+  // Create new account
+  const newUser = {
+    nome, cpf, senha,
+    saldo: 1000.00,
+    agencia: '0003',
+    conta: Math.floor(10000+Math.random()*89999)+'-'+Math.floor(Math.random()*9),
+    pix_key: cpf,
+    transactions: [
+      { id:1, tipo:'in', desc:'Bônus de boas-vindas 🎉', valor: 1000.00, data: new Date().toISOString().slice(0,10), icon:'🎁' }
+    ],
+    card: { numero:'**** **** **** '+Math.floor(1000+Math.random()*8999), limite: 1000.00, usado: 0, vencimento:'12/2028', fatura: [] }
+  };
+  DEMO_ACCOUNTS.push(newUser);
+  enterApp(newUser);
+  showToast('🎉 Conta criada com sucesso! Bem-vindo(a), ' + nome.split(' ')[0] + '!', 'success');
+}
+
+function loginDemo(idx) {
+  enterApp(DEMO_ACCOUNTS[idx]);
+}
+
+function enterApp(user) {
+  currentUser = user;
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('mainApp').style.display = '';
+  document.getElementById('narratorFab').style.display = '';
+  const firstName = user.nome.split(' ')[0];
+  document.getElementById('headerGreeting').textContent = 'Olá, ' + firstName + ' 👋';
+  document.getElementById('userAvatar').textContent = firstName[0].toUpperCase();
+  navigate('inicio');
+}
+
+function doLogout() {
+  stopNarrator();
+  currentUser = null;
+  document.getElementById('mainApp').style.display = 'none';
+  document.getElementById('loginScreen').style.display = '';
+  document.getElementById('loginCpf').value = '';
+  document.getElementById('loginSenha').value = '';
+  switchTab('login');
+  showToast('Você saiu da sua conta com segurança. Até logo! 👋', 'info');
+}
+
+// ==================== NAVIGATION ====================
+function navigate(screen) {
+  stopNarrator();
+  currentScreen = screen;
+  const labels = { inicio:'Início', pix:'PIX — Enviar dinheiro', extrato:'Extrato de transações', cartao:'Cartão de crédito', transferir:'Transferir entre contas', pagar:'Pagar conta', recarga:'Recarga de celular', acessibilidade:'Acessibilidade' };
+  document.getElementById('breadcrumbLabel').textContent = labels[screen] || screen;
+
+  // Sidebar active
+  document.querySelectorAll('.nav-item').forEach(b => { b.classList.remove('active'); b.removeAttribute('aria-current'); });
+  const sn = document.getElementById('nav-'+screen);
+  if (sn) { sn.classList.add('active'); sn.setAttribute('aria-current','page'); }
+  document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+  const mn = document.getElementById('mnav-'+screen);
+  if (mn) mn.classList.add('active');
+
+  const content = document.getElementById('mainContent');
+  content.focus();
+
+  const renders = { inicio: renderInicio, pix: renderPix, extrato: renderExtrato, cartao: renderCartao, transferir: renderTransferir, pagar: renderPagar, recarga: renderRecarga, acessibilidade: renderAcessibilidade };
+  if (renders[screen]) renders[screen]();
+  else content.innerHTML = '<p>Tela não encontrada.</p>';
+}
+
+// ==================== SCREENS ====================
+function renderInicio() {
+  const u = currentUser;
+  const saldo = balanceVisible ? fmtMoney(u.saldo) : '•••••••';
+  const recentes = u.transactions.slice(-3).reverse();
+  document.getElementById('mainContent').innerHTML = `
+    <h1 class="screen-title">Olá, ${u.nome.split(' ')[0]}! 👋</h1>
+    <p class="screen-subtitle">Aqui está um resumo da sua conta</p>
+
+    <div class="balance-card" role="region" aria-label="Saldo da conta">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <p class="balance-label">Saldo disponível</p>
+          <p class="balance-amount" id="balanceDisplay">${saldo}</p>
+          <p class="balance-account">Ag. ${u.agencia} · Cc. ${u.conta}</p>
+        </div>
+        <div style="text-align:right;">
+          <span class="badge demo">CONTA DEMO</span>
+        </div>
+      </div>
+      <button class="eye-btn" onclick="toggleBalance()" aria-label="${balanceVisible ? 'Ocultar' : 'Mostrar'} saldo">
+        ${balanceVisible ? '👁 Ocultar saldo' : '👁 Mostrar saldo'}
+      </button>
+    </div>
+
+    <h2 style="font-size:18px;font-weight:700;margin:28px 0 14px;color:var(--gray-text);">O que você deseja fazer?</h2>
+    <div class="quick-actions" role="navigation" aria-label="Ações rápidas">
+      <button class="action-btn" onclick="navigate('pix')" aria-label="Fazer um PIX">
+        <span class="icon">⚡</span>PIX
+      </button>
+      <button class="action-btn" onclick="navigate('extrato')" aria-label="Ver extrato">
+        <span class="icon">📋</span>Ver extrato
+      </button>
+      <button class="action-btn" onclick="navigate('cartao')" aria-label="Ver cartão e fatura">
+        <span class="icon">💳</span>Fatura do cartão
+      </button>
+      <button class="action-btn" onclick="navigate('transferir')" aria-label="Transferir dinheiro">
+        <span class="icon">↔️</span>Transferir
+      </button>
+      <button class="action-btn" onclick="navigate('pagar')" aria-label="Pagar uma conta">
+        <span class="icon">📄</span>Pagar conta
+      </button>
+      <button class="action-btn" onclick="navigate('recarga')" aria-label="Fazer recarga de celular">
+        <span class="icon">📱</span>Recarga
+      </button>
+    </div>
+
+    <h2 style="font-size:18px;font-weight:700;margin:28px 0 14px;color:var(--gray-text);">Últimas movimentações</h2>
+    <div class="card">
+      ${recentes.map(tx => txRow(tx)).join('')}
+      <button class="submit-btn-secondary" style="width:100%;margin-top:16px;" onclick="navigate('extrato')">📋 Ver todas as movimentações</button>
+    </div>
+  `;
+}
+
+function txRow(tx) {
+  const cls = tx.tipo;
+  const sign = tx.valor > 0 ? '+' : '';
+  return `
+    <div class="tx-item">
+      <div class="tx-icon ${cls}" aria-hidden="true">${tx.icon}</div>
+      <div class="tx-desc">
+        <strong>${tx.desc}</strong>
+        <span>${fmtDate(tx.data)}</span>
+      </div>
+      <span class="tx-amount ${cls}" aria-label="${tx.valor > 0 ? 'Entrada de' : 'Saída de'} ${fmtMoney(tx.valor)}">${sign}${fmtMoney(tx.valor)}</span>
+    </div>`;
+}
+
+function toggleBalance() {
+  balanceVisible = !balanceVisible;
+  renderInicio();
+}
+
+function renderExtrato() {
+  const txs = [...currentUser.transactions].reverse();
+  const entradas = txs.filter(t => t.valor > 0).reduce((s,t) => s + t.valor, 0);
+  const saidas = txs.filter(t => t.valor < 0).reduce((s,t) => s + t.valor, 0);
+  document.getElementById('mainContent').innerHTML = `
+    <h1 class="screen-title">📋 Extrato</h1>
+    <p class="screen-subtitle">Todas as suas movimentações</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:24px;">
+      <div class="card" style="text-align:center;">
+        <p style="font-size:13px;color:var(--gray-muted);font-weight:600;">Saldo atual</p>
+        <p style="font-size:22px;font-weight:800;color:var(--green);">${fmtMoney(currentUser.saldo)}</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <p style="font-size:13px;color:var(--gray-muted);font-weight:600;">Entradas no mês</p>
+        <p style="font-size:22px;font-weight:800;color:var(--green);">+${fmtMoney(entradas)}</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <p style="font-size:13px;color:var(--gray-muted);font-weight:600;">Saídas no mês</p>
+        <p style="font-size:22px;font-weight:800;color:var(--orange);">${fmtMoney(Math.abs(saidas))}</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <h2 style="font-size:17px;font-weight:700;">Movimentações — Maio 2025</h2>
+        <button onclick="downloadExtrato()" style="background:var(--blue-light);border:none;color:var(--blue);border-radius:8px;padding:8px 14px;cursor:pointer;font-family:var(--font);font-weight:700;font-size:14px;">📥 Baixar PDF</button>
+      </div>
+      ${txs.map(tx => txRow(tx)).join('')}
+    </div>
+  `;
+}
+
+function renderPix() {
+  pixStep = 1;
+  pixData = {};
+  renderPixStep();
+}
+
+function renderPixStep() {
+  let html = `
+    <h1 class="screen-title">⚡ PIX</h1>
+    <p class="screen-subtitle">Envie dinheiro de forma rápida e segura</p>
+    <div class="steps" role="progressbar" aria-label="Etapa ${pixStep} de 3" aria-valuenow="${pixStep}" aria-valuemin="1" aria-valuemax="3">
+      <div class="step ${pixStep >= 1 ? 'active' : ''}" aria-label="Etapa 1: Destinatário">1</div>
+      <div class="step-line ${pixStep >= 2 ? 'done' : ''}"></div>
+      <div class="step ${pixStep >= 2 ? (pixStep > 2 ? 'done' : 'active') : ''}" aria-label="Etapa 2: Valor">2</div>
+      <div class="step-line ${pixStep >= 3 ? 'done' : ''}"></div>
+      <div class="step ${pixStep >= 3 ? 'active' : ''}" aria-label="Etapa 3: Confirmar">3</div>
+    </div>
+    <div class="card">`;
+
+  if (pixStep === 1) {
+    html += `
+      <h2 style="font-size:19px;font-weight:800;margin-bottom:4px;">Passo 1: Quem vai receber?</h2>
+      <p style="color:var(--gray-muted);font-size:15px;margin-bottom:20px;">Escolha o tipo de chave PIX e informe os dados</p>
+
+      <div class="form-group">
+        <label class="form-label">Tipo de chave PIX</label>
+        <div class="pix-key-options" role="group" aria-label="Tipo de chave PIX">
+          <button class="pix-key-btn selected" id="ptype-cpf" onclick="selectPixType('cpf')">CPF</button>
+          <button class="pix-key-btn" id="ptype-telefone" onclick="selectPixType('telefone')">Telefone</button>
+          <button class="pix-key-btn" id="ptype-email" onclick="selectPixType('email')">E-mail</button>
+          <button class="pix-key-btn" id="ptype-aleatorio" onclick="selectPixType('aleatorio')">Chave aleatória</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="pixKey">🔑 Chave PIX do destinatário</label>
+        <input class="form-input" id="pixKey" type="text" placeholder="000.000.000-00">
+        <p class="form-hint" id="pixKeyHint">Digite o CPF de quem vai receber</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="pixNome">👤 Nome do destinatário (opcional)</label>
+        <input class="form-input" id="pixNome" type="text" placeholder="Ex: José da Silva">
+      </div>
+      <button class="submit-btn" onclick="pixNext()">Próximo passo →</button>
+    `;
+  } else if (pixStep === 2) {
+    html += `
+      <h2 style="font-size:19px;font-weight:800;margin-bottom:4px;">Passo 2: Qual o valor?</h2>
+      <p style="color:var(--gray-muted);font-size:15px;margin-bottom:20px;">Informe quanto você quer enviar</p>
+
+      <div style="background:var(--green-light);border-radius:12px;padding:14px 18px;margin-bottom:20px;font-size:15px;">
+        🔑 Enviando para: <strong>${pixData.key}</strong> ${pixData.nome ? '· ' + pixData.nome : ''}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="pixValor">💰 Valor (em Reais)</label>
+        <input class="form-input" id="pixValor" type="number" min="0.01" step="0.01" placeholder="0,00" style="font-size:26px;font-weight:800;text-align:center;">
+        <p class="form-hint">Saldo disponível: <strong style="color:var(--green);">${fmtMoney(currentUser.saldo)}</strong></p>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="pixDesc">💬 Descrição (opcional)</label>
+        <input class="form-input" id="pixDesc" type="text" placeholder="Ex: Pagamento almoço, presente, etc.">
+      </div>
+      <div style="display:flex;gap:12px;margin-top:8px;">
+        <button class="submit-btn-secondary" onclick="pixBack()" style="flex:1;">← Voltar</button>
+        <button class="submit-btn" onclick="pixNext()" style="flex:2;">Revisar PIX →</button>
+      </div>
+    `;
+  } else if (pixStep === 3) {
+    html += `
+      <h2 style="font-size:19px;font-weight:800;margin-bottom:4px;">Passo 3: Confirmar envio</h2>
+      <p style="color:var(--gray-muted);font-size:15px;margin-bottom:20px;">Confira os dados antes de enviar</p>
+
+      <div class="confirm-box">
+        <h3>📋 Resumo do PIX</h3>
+        <div class="confirm-row"><span>Para:</span><span>${pixData.key}</span></div>
+        ${pixData.nome ? `<div class="confirm-row"><span>Nome:</span><span>${pixData.nome}</span></div>` : ''}
+        ${pixData.desc ? `<div class="confirm-row"><span>Descrição:</span><span>${pixData.desc}</span></div>` : ''}
+        <div class="confirm-row"><span>Data e hora:</span><span>Agora</span></div>
+        <div class="confirm-row"><span>💸 Valor a enviar:</span><span style="color:var(--green);font-size:20px;">${fmtMoney(pixData.valor)}</span></div>
+      </div>
+
+      <div style="background:var(--orange-light);border-radius:10px;padding:12px 16px;font-size:14px;margin-bottom:20px;color:#7a4400;">
+        ⚠️ Atenção: Esta operação é simulada. Nenhum dinheiro real será transferido.
+      </div>
+      <div style="display:flex;gap:12px;">
+        <button class="submit-btn-secondary" onclick="pixBack()" style="flex:1;">← Corrigir</button>
+        <button class="submit-btn" onclick="pixConfirm()" style="flex:2;">✅ Confirmar e enviar</button>
+      </div>
+    `;
+  }
+
+  html += '</div>';
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+let selectedPixType = 'cpf';
+function selectPixType(type) {
+  selectedPixType = type;
+  ['cpf','telefone','email','aleatorio'].forEach(t => {
+    document.getElementById('ptype-'+t).classList.toggle('selected', t === type);
+  });
+  const hints = { cpf:'Digite o CPF de quem vai receber', telefone:'Ex: (11) 99999-9999', email:'Ex: nome@email.com', aleatorio:'Cole a chave aleatória' };
+  const placeholders = { cpf:'000.000.000-00', telefone:'(11) 99999-9999', email:'nome@email.com', aleatorio:'Chave aleatória' };
+  document.getElementById('pixKeyHint').textContent = hints[type];
+  document.getElementById('pixKey').placeholder = placeholders[type];
+  document.getElementById('pixKey').value = '';
+  if (type === 'telefone') document.getElementById('pixKey').oninput = function() { maskPhone(this); };
+  else if (type === 'cpf') document.getElementById('pixKey').oninput = function() { maskCPF(this); };
+  else document.getElementById('pixKey').oninput = null;
+}
+
+function pixNext() {
+  if (pixStep === 1) {
+    const key = document.getElementById('pixKey').value.trim();
+    if (!key) { showToast('Por favor, informe a chave PIX do destinatário.', 'warning'); return; }
+    pixData.key = key;
+    pixData.nome = document.getElementById('pixNome').value.trim();
+    pixStep = 2;
+  } else if (pixStep === 2) {
+    const val = parseFloat(document.getElementById('pixValor').value);
+    if (!val || val <= 0) { showToast('Por favor, informe um valor maior que zero.', 'warning'); return; }
+    if (val > currentUser.saldo) { showToast('Saldo insuficiente para realizar este PIX.', 'error'); return; }
+    pixData.valor = val;
+    pixData.desc = document.getElementById('pixDesc').value.trim();
+    pixStep = 3;
+  }
+  renderPixStep();
+}
+function pixBack() { pixStep--; renderPixStep(); }
+
+function pixConfirm() {
+  currentUser.saldo -= pixData.valor;
+  currentUser.transactions.push({
+    id: ++nextTxId,
+    tipo: 'out',
+    desc: 'PIX enviado — ' + pixData.key,
+    valor: -pixData.valor,
+    data: new Date().toISOString().slice(0,10),
+    icon: '⚡'
+  });
+  showToast(`⚡ PIX de ${fmtMoney(pixData.valor)} enviado com sucesso!`, 'success');
+  navigate('inicio');
+}
+
+function renderCartao() {
+  const c = currentUser.card;
+  const pct = Math.round((c.usado / c.limite) * 100);
+  const disponivel = c.limite - c.usado;
+  document.getElementById('mainContent').innerHTML = `
+    <h1 class="screen-title">💳 Cartão de Crédito</h1>
+    <p class="screen-subtitle">Veja sua fatura e limite disponível</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;margin-bottom:24px;">
+      <div>
+        <div class="credit-card-visual" role="img" aria-label="Cartão de crédito BankOfLion, número ${c.numero}">
+          <div class="card-chip">💳</div>
+          <p class="card-number">${c.numero}</p>
+          <div class="card-details">
+            <div><small>TITULAR</small><br><strong style="font-size:15px;">${currentUser.nome.toUpperCase()}</strong></div>
+            <div><small>VALIDADE</small><br><strong>${c.vencimento}</strong></div>
+          </div>
+          <div style="margin-top:14px;">
+            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;">
+              <span>Limite usado: ${fmtMoney(c.usado)}</span>
+              <span>${pct}%</span>
+            </div>
+            <div class="card-limit-bar"><div class="card-limit-fill" style="width:${pct}%;"></div></div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="card">
+          <p style="font-size:13px;color:var(--gray-muted);font-weight:600;">Fatura atual</p>
+          <p style="font-size:26px;font-weight:800;color:var(--blue);">${fmtMoney(c.usado)}</p>
+          <p style="font-size:13px;color:var(--gray-muted);">Vencimento: dia 10</p>
+        </div>
+        <div class="card">
+          <p style="font-size:13px;color:var(--gray-muted);font-weight:600;">Limite disponível</p>
+          <p style="font-size:26px;font-weight:800;color:var(--green);">${fmtMoney(disponivel)}</p>
+          <p style="font-size:13px;color:var(--gray-muted);">Limite total: ${fmtMoney(c.limite)}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <h2 style="font-size:17px;font-weight:700;">Lançamentos da fatura</h2>
+        <button onclick="downloadFatura()" style="background:var(--blue-light);border:none;color:var(--blue);border-radius:8px;padding:8px 14px;cursor:pointer;font-family:var(--font);font-weight:700;font-size:14px;">📥 Baixar fatura</button>
+      </div>
+      ${c.fatura.length === 0 ? '<p style="color:var(--gray-muted);text-align:center;padding:20px 0;">Nenhum lançamento nesta fatura.</p>' : c.fatura.map(f => `
+        <div class="tx-item">
+          <div class="tx-icon pay">💳</div>
+          <div class="tx-desc">
+            <strong>${f.desc}</strong>
+            <span>${fmtDate(f.data)}</span>
+          </div>
+          <span class="tx-amount pay">${fmtMoney(f.valor)}</span>
+        </div>
+      `).join('')}
+    </div>
+
+    <div style="margin-top:16px;">
+      <button class="submit-btn" onclick="pagarFatura()" style="background:var(--blue);"
+        ${c.usado === 0 ? 'disabled' : ''}>
+        💳 Pagar fatura completa (${fmtMoney(c.usado)})
+      </button>
+    </div>
+  `;
+}
+
+function pagarFatura() {
+  const c = currentUser.card;
+  if (c.usado > currentUser.saldo) { showToast('Saldo insuficiente para pagar a fatura.', 'error'); return; }
+  currentUser.saldo -= c.usado;
+  currentUser.transactions.push({ id: ++nextTxId, tipo:'pay', desc:'Pagamento fatura cartão', valor: -c.usado, data: new Date().toISOString().slice(0,10), icon:'💳' });
+  showToast(`✅ Fatura de ${fmtMoney(c.usado)} paga com sucesso!`, 'success');
+  c.usado = 0;
+  c.fatura = [];
+  renderCartao();
+}
+
+function renderTransferir() {
+  document.getElementById('mainContent').innerHTML = `
+    <h1 class="screen-title">↔️ Transferir</h1>
+    <p class="screen-subtitle">Envie dinheiro para outra conta BankOfLion ou outro banco</p>
+
+    <div class="card">
+      <div class="form-group">
+        <label class="form-label" for="tfBanco">🏦 Banco de destino</label>
+        <select class="form-input" id="tfBanco" style="cursor:pointer;">
+          <option value="">Selecione o banco</option>
+          <option value="bankoflion">BankOfLion</option>
+          <option value="bb">Banco do Brasil</option>
+          <option value="cef">Caixa Econômica Federal</option>
+          <option value="itau">Itaú</option>
+          <option value="bradesco">Bradesco</option>
+          <option value="nubank">Nubank</option>
+          <option value="santander">Santander</option>
+        </select>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="form-group">
+          <label class="form-label" for="tfAgencia">Agência</label>
+          <input class="form-input" id="tfAgencia" type="text" placeholder="0000" maxlength="4">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="tfConta">Conta</label>
+          <input class="form-input" id="tfConta" type="text" placeholder="00000-0" maxlength="8">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="tfNome">👤 Nome do titular</label>
+        <input class="form-input" id="tfNome" type="text" placeholder="Nome completo">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="tfValor">💰 Valor da transferência</label>
+        <input class="form-input" id="tfValor" type="number" min="0.01" placeholder="0,00" style="font-size:22px;text-align:center;">
+        <p class="form-hint">Saldo disponível: <strong style="color:var(--green);">${fmtMoney(currentUser.saldo)}</strong></p>
+      </div>
+      <button class="submit-btn" onclick="doTransferir()">↔️ Realizar transferência</button>
+    </div>
+  `;
+}
+
+function doTransferir() {
+  const banco = document.getElementById('tfBanco').value;
+  const agencia = document.getElementById('tfAgencia').value.trim();
+  const conta = document.getElementById('tfConta').value.trim();
+  const nome = document.getElementById('tfNome').value.trim();
+  const valor = parseFloat(document.getElementById('tfValor').value);
+  if (!banco || !agencia || !conta || !nome) { showToast('Por favor, preencha todos os campos.', 'warning'); return; }
+  if (!valor || valor <= 0) { showToast('Informe um valor válido para a transferência.', 'warning'); return; }
+  if (valor > currentUser.saldo) { showToast('Saldo insuficiente para esta transferência.', 'error'); return; }
+  currentUser.saldo -= valor;
+  currentUser.transactions.push({ id: ++nextTxId, tipo:'out', desc:'Transferência para ' + nome, valor: -valor, data: new Date().toISOString().slice(0,10), icon:'↔️' });
+  showToast(`✅ Transferência de ${fmtMoney(valor)} realizada com sucesso para ${nome}!`, 'success');
+  navigate('extrato');
+}
+
+function renderPagar() {
+  document.getElementById('mainContent').innerHTML = `
+    <h1 class="screen-title">📄 Pagar conta</h1>
+    <p class="screen-subtitle">Pague boletos, contas de água, luz, telefone e mais</p>
+
+    <div class="card">
+      <div class="form-group">
+        <label class="form-label" for="pagarTipo">📋 Tipo de pagamento</label>
+        <select class="form-input" id="pagarTipo" style="cursor:pointer;" onchange="updatePayHint()">
+          <option value="">Selecione o tipo</option>
+          <option value="boleto">Boleto bancário</option>
+          <option value="luz">Conta de energia elétrica</option>
+          <option value="agua">Conta de água</option>
+          <option value="telefone">Conta de telefone/internet</option>
+          <option value="gas">Conta de gás</option>
+          <option value="condominio">Condomínio</option>
+          <option value="iptu">IPTU</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="pagarCodigo">🔢 Código de barras ou linha digitável</label>
+        <input class="form-input" id="pagarCodigo" type="text" placeholder="Digite ou cole o código aqui" oninput="maskBarcode(this)">
+        <p class="form-hint" id="pagarHint">Cole o código que está na sua conta ou boleto</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="pagarValor">💰 Valor a pagar</label>
+        <input class="form-input" id="pagarValor" type="number" min="0.01" step="0.01" placeholder="0,00" style="font-size:22px;text-align:center;">
+        <p class="form-hint">Saldo disponível: <strong style="color:var(--green);">${fmtMoney(currentUser.saldo)}</strong></p>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="pagarDesc">📝 Descrição (opcional)</label>
+        <input class="form-input" id="pagarDesc" type="text" placeholder="Ex: Conta de luz maio">
+      </div>
+      <button class="submit-btn" onclick="doPagar()" style="background:var(--blue);">📄 Pagar agora</button>
+    </div>
+  `;
+}
+
+function updatePayHint() {
+  const tipo = document.getElementById('pagarTipo').value;
+  const hints = { boleto:'Cole os 47 dígitos do código de barras', luz:'Código na sua conta de energia', agua:'Código na sua conta de água', telefone:'Código na sua fatura', gas:'Código na sua conta de gás', condominio:'Boleto do condomínio', iptu:'Número do carnê do IPTU' };
+  if (hints[tipo]) document.getElementById('pagarHint').textContent = hints[tipo];
+}
+
+function doPagar() {
+  const tipo = document.getElementById('pagarTipo').value;
+  const codigo = document.getElementById('pagarCodigo').value.trim();
+  const valor = parseFloat(document.getElementById('pagarValor').value);
+  const desc = document.getElementById('pagarDesc').value.trim();
+  if (!tipo) { showToast('Selecione o tipo de pagamento.', 'warning'); return; }
+  if (!codigo) { showToast('Informe o código de barras ou linha digitável.', 'warning'); return; }
+  if (!valor || valor <= 0) { showToast('Informe o valor a pagar.', 'warning'); return; }
+  if (valor > currentUser.saldo) { showToast('Saldo insuficiente para este pagamento.', 'error'); return; }
+  currentUser.saldo -= valor;
+  const icons = { boleto:'📄', luz:'💡', agua:'🚰', telefone:'📞', gas:'🔥', condominio:'🏢', iptu:'🏠' };
+  currentUser.transactions.push({ id: ++nextTxId, tipo:'pay', desc: desc || 'Pagamento de conta', valor: -valor, data: new Date().toISOString().slice(0,10), icon: icons[tipo] || '📄' });
+  showToast(`✅ Pagamento de ${fmtMoney(valor)} realizado com sucesso!`, 'success');
+  navigate('extrato');
+}
+
+function renderRecarga() {
+  document.getElementById('mainContent').innerHTML = `
+    <h1 class="screen-title">📱 Recarga de celular</h1>
+    <p class="screen-subtitle">Recarregue qualquer chip pré-pago</p>
+
+    <div class="card">
+      <div class="form-group">
+        <label class="form-label" for="recOperadora">📡 Operadora</label>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:4px;" role="group" aria-label="Selecione a operadora">
+          <button class="pix-key-btn" id="op-claro" onclick="selectOp('claro')" style="padding:14px 8px;">📶 Claro</button>
+          <button class="pix-key-btn" id="op-vivo" onclick="selectOp('vivo')" style="padding:14px 8px;">📶 Vivo</button>
+          <button class="pix-key-btn" id="op-tim" onclick="selectOp('tim')" style="padding:14px 8px;">📶 TIM</button>
+          <button class="pix-key-btn" id="op-oi" onclick="selectOp('oi')" style="padding:14px 8px;">📶 Oi</button>
+          <button class="pix-key-btn" id="op-nextel" onclick="selectOp('nextel')" style="padding:14px 8px;">📶 Nextel</button>
+          <button class="pix-key-btn" id="op-algar" onclick="selectOp('algar')" style="padding:14px 8px;">📶 Algar</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="recTel">📱 Número do celular</label>
+        <input class="form-input" id="recTel" type="tel" placeholder="(11) 99999-9999" oninput="maskPhone(this)" maxlength="15">
+      </div>
+      <div class="form-group">
+        <label class="form-label">💰 Valor da recarga</label>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+          ${[10,20,30,50,70,100,150,200].map(v => `<button class="pix-key-btn" id="rec-${v}" onclick="selectRecarga(${v})" style="padding:14px 8px;font-size:16px;font-weight:800;">R$${v}</button>`).join('')}
+        </div>
+      </div>
+      <p style="font-size:14px;color:var(--gray-muted);margin-bottom:16px;">Saldo disponível: <strong style="color:var(--green);">${fmtMoney(currentUser.saldo)}</strong></p>
+      <button class="submit-btn" id="recBtn" onclick="doRecarga()" disabled>📱 Recarregar</button>
+    </div>
+  `;
+}
+
+let selectedOp = null, selectedRecValue = null;
+function selectOp(op) {
+  selectedOp = op;
+  ['claro','vivo','tim','oi','nextel','algar'].forEach(o => document.getElementById('op-'+o).classList.toggle('selected', o===op));
+  checkRecBtn();
+}
+function selectRecarga(val) {
+  selectedRecValue = val;
+  [10,20,30,50,70,100,150,200].forEach(v => document.getElementById('rec-'+v).classList.toggle('selected', v===val));
+  checkRecBtn();
+}
+function checkRecBtn() {
+  const tel = document.getElementById('recTel');
+  const btn = document.getElementById('recBtn');
+  if (btn && selectedOp && selectedRecValue && tel && tel.value.length >= 14) btn.disabled = false;
+}
+function doRecarga() {
+  if (!selectedOp || !selectedRecValue) { showToast('Selecione a operadora e o valor.', 'warning'); return; }
+  const tel = document.getElementById('recTel').value.trim();
+  if (!tel || tel.length < 14) { showToast('Informe o número do celular.', 'warning'); return; }
+  if (selectedRecValue > currentUser.saldo) { showToast('Saldo insuficiente para esta recarga.', 'error'); return; }
+  currentUser.saldo -= selectedRecValue;
+  currentUser.transactions.push({ id: ++nextTxId, tipo:'pay', desc:'Recarga ' + selectedOp.charAt(0).toUpperCase()+selectedOp.slice(1) + ' ' + tel, valor: -selectedRecValue, data: new Date().toISOString().slice(0,10), icon:'📱' });
+  showToast(`📱 Recarga de ${fmtMoney(selectedRecValue)} realizada com sucesso para ${tel}!`, 'success');
+  selectedOp = null; selectedRecValue = null;
+  navigate('extrato');
+}
+
+// ==================== ACESSIBILIDADE SCREEN ====================
+function renderAcessibilidade() {
+  document.getElementById('mainContent').innerHTML = `
+    <h1 class="screen-title">♿ Acessibilidade</h1>
+    <p class="screen-subtitle">Personalize o site do jeito que for mais fácil para você</p>
+
+    <!-- TAMANHO DA LETRA -->
+    <div class="acc-option-card">
+      <div class="acc-option-info">
+        <h3>🔤 Tamanho da letra</h3>
+        <p>Aumente ou diminua o tamanho de todo o texto do site</p>
+        <div style="height:8px;background:var(--gray-border);border-radius:4px;margin-top:10px;overflow:hidden;">
+          <div id="fontLevelBar" style="height:100%;background:var(--green);border-radius:4px;transition:width 0.3s;width:${(fontLevel/5)*100}%;"></div>
+        </div>
+        <p id="fontLevelDisplay" style="font-size:0.8rem;color:var(--green);font-weight:800;margin-top:6px;">${fontLabels[fontLevel]}</p>
+      </div>
+      <div class="font-size-controls">
+        <button class="font-size-btn" onclick="changeFontSize(-1)" aria-label="Diminuir letra">A−</button>
+        <button class="font-size-btn" onclick="changeFontSize(1)" aria-label="Aumentar letra" style="font-size:1.4rem;">A+</button>
+      </div>
+    </div>
+
+    <!-- TAMANHOS RÁPIDOS -->
+    <div class="acc-option-card" style="flex-direction:column;align-items:flex-start;gap:12px;">
+      <div class="acc-option-info">
+        <h3>🔡 Escolha rápida de tamanho</h3>
+        <p>Clique no tamanho que preferir</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;">
+        ${fontLabels.map((lbl,i) => `<button onclick="applyFontLevel(${i}); renderAcessibilidade();" style="padding:12px 8px;border:2px solid ${fontLevel===i?'var(--green)':'var(--gray-border)'};border-radius:10px;background:${fontLevel===i?'var(--green-light)':'#fff'};color:${fontLevel===i?'var(--green)':'var(--gray-text)'};font-family:var(--font);font-weight:700;cursor:pointer;font-size:${0.7+i*0.08}rem;">${lbl}</button>`).join('')}
+      </div>
+    </div>
+
+    <!-- CONTRASTE -->
+    <div class="acc-option-card">
+      <div class="acc-option-info">
+        <h3>◐ Alto contraste</h3>
+        <p>Aumenta o contraste das cores para facilitar a leitura em telas com reflexo ou para quem tem baixa visão</p>
+      </div>
+      <button class="toggle-switch ${highContrast?'on':''}" id="toggleContrast"
+        onclick="toggleContrast()" role="switch" aria-checked="${highContrast}"
+        aria-label="Alto contraste ${highContrast?'ativado':'desativado'}"></button>
+    </div>
+
+    <!-- MODO ESCURO -->
+    <div class="acc-option-card">
+      <div class="acc-option-info">
+        <h3>🌙 Modo escuro</h3>
+        <p>Fundo escuro com letras claras — mais confortável à noite ou em ambientes com pouca luz</p>
+      </div>
+      <button class="toggle-switch ${darkMode?'on':''}" id="toggleDark"
+        onclick="toggleDarkMode()" role="switch" aria-checked="${darkMode}"
+        aria-label="Modo escuro ${darkMode?'ativado':'desativado'}" style="background:${darkMode?'#7c3aed':''}"></button>
+    </div>
+
+    <!-- CORES / TEMA -->
+    <div class="acc-option-card" style="flex-direction:column;align-items:flex-start;gap:12px;">
+      <div class="acc-option-info">
+        <h3>🎨 Tema de cores</h3>
+        <p>Escolha a aparência que preferir</p>
+      </div>
+      <div class="color-scheme-grid" style="width:100%;">
+        <button class="color-scheme-btn ${!highContrast&&!darkMode?'active':''}" onclick="setTheme('normal')">
+          <div class="scheme-swatch" style="background:linear-gradient(135deg,#1a7a4a,#e8f5ee);"></div>
+          Normal
+        </button>
+        <button class="color-scheme-btn ${highContrast?'active':''}" onclick="setTheme('contraste')">
+          <div class="scheme-swatch" style="background:linear-gradient(135deg,#000,#fff);border:2px solid #000;"></div>
+          Alto contraste
+        </button>
+        <button class="color-scheme-btn ${darkMode?'active':''}" onclick="setTheme('escuro')">
+          <div class="scheme-swatch" style="background:linear-gradient(135deg,#1a1c23,#7c3aed);"></div>
+          Escuro
+        </button>
+      </div>
+    </div>
+
+    <!-- NARRADOR -->
+    <div class="acc-option-card" style="flex-direction:column;align-items:flex-start;gap:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;width:100%;">
+        <div class="acc-option-info">
+          <h3>🔊 Narrador de tela</h3>
+          <p>O narrador lê em voz alta o conteúdo de cada tela. Clique no botão roxo 🔊 no canto da tela a qualquer momento para ouvir.</p>
+        </div>
+      </div>
+      <div style="width:100%;">
+        <p style="font-size:0.82rem;font-weight:700;color:var(--gray-muted);margin-bottom:8px;">Velocidade da leitura:</p>
+        <div class="speed-controls">
+          <button class="speed-btn ${narratorSpeed===0.7?'active':''}" onclick="setNarratorSpeed(0.7, this)">🐢 Lenta</button>
+          <button class="speed-btn ${narratorSpeed===1.0?'active':''}" onclick="setNarratorSpeed(1.0, this)">🚶 Normal</button>
+          <button class="speed-btn ${narratorSpeed===1.5?'active':''}" onclick="setNarratorSpeed(1.5, this)">🚀 Rápida</button>
+        </div>
+      </div>
+      <button class="submit-btn" onclick="navigate('inicio'); setTimeout(startNarrator,500);" style="background:#7c3aed;width:100%;">
+        🔊 Testar narrador agora
+      </button>
+    </div>
+
+    <!-- RESETAR -->
+    <div style="margin-top:8px;">
+      <button class="submit-btn-secondary" onclick="resetAcessibilidade()" style="width:100%;color:var(--red);border-color:var(--red);">
+        🔄 Restaurar configurações padrão
+      </button>
+    </div>
+  `;
+}
+
+function setTheme(theme) {
+  highContrast = false; darkMode = false;
+  document.body.classList.remove('high-contrast','dark-mode');
+  if (theme === 'contraste') { highContrast = true; document.body.classList.add('high-contrast'); }
+  else if (theme === 'escuro') { darkMode = true; document.body.classList.add('dark-mode'); }
+  showToast('🎨 Tema alterado!', 'info');
+  renderAcessibilidade();
+}
+
+function resetAcessibilidade() {
+  applyFontLevel(2);
+  highContrast = false; darkMode = false;
+  document.body.classList.remove('high-contrast','dark-mode');
+  narratorSpeed = 1.0;
+  showToast('🔄 Configurações de acessibilidade restauradas ao padrão.', 'info');
+  renderAcessibilidade();
+}
+
+// ==================== PDF DOWNLOADS ====================
+function downloadExtrato() {
+  const u = currentUser;
+  const txs = [...u.transactions].reverse();
+  let rows = txs.map(t => `
+    <tr>
+      <td>${fmtDate(t.data)}</td>
+      <td>${t.desc}</td>
+      <td style="text-align:right;color:${t.valor>0?'#1a7a4a':'#c0392b'};font-weight:bold;">${t.valor>0?'+':''}${fmtMoney(t.valor)}</td>
+    </tr>`).join('');
+
+  const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Extrato BankOfLion</title>
+  <style>body{font-family:Arial,sans-serif;padding:32px;color:#222;} h1{color:#1a7a4a;} table{width:100%;border-collapse:collapse;margin-top:20px;} th{background:#1a7a4a;color:#fff;padding:10px;text-align:left;} td{padding:8px 10px;border-bottom:1px solid #eee;} .header{display:flex;justify-content:space-between;margin-bottom:24px;border-bottom:2px solid #1a7a4a;padding-bottom:16px;}</style>
+  </head><body>
+  <div class="header"><div><h1>BankOfLion</h1><p>Extrato de conta — ${u.nome}</p><p>Ag. ${u.agencia} | Cc. ${u.conta}</p></div><div style="text-align:right;"><p>Data de emissão: ${new Date().toLocaleDateString('pt-BR')}</p><p>Saldo atual: <strong style="color:#1a7a4a;">${fmtMoney(u.saldo)}</strong></p></div></div>
+  <table><thead><tr><th>Data</th><th>Descrição</th><th>Valor</th></tr></thead><tbody>${rows}</tbody></table>
+  <p style="margin-top:24px;font-size:12px;color:#888;">* Este extrato é de uma conta demonstrativa. Dados fictícios para fins de teste.</p>
+  </body></html>`;
+
+  const blob = new Blob([html], { type:'text/html' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'extrato-bankoflion.html';
+  a.click();
+  showToast('📥 Extrato baixado com sucesso!', 'success');
+}
+
+function downloadFatura() {
+  const u = currentUser;
+  const c = u.card;
+  let rows = c.fatura.map(f => `<tr><td>${fmtDate(f.data)}</td><td>${f.desc}</td><td style="text-align:right;font-weight:bold;">${fmtMoney(f.valor)}</td></tr>`).join('');
+  const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Fatura BankOfLion</title>
+  <style>body{font-family:Arial,sans-serif;padding:32px;color:#222;} h1{color:#1a5fa8;} table{width:100%;border-collapse:collapse;margin-top:20px;} th{background:#1a5fa8;color:#fff;padding:10px;text-align:left;} td{padding:8px 10px;border-bottom:1px solid #eee;} .total{font-size:18px;font-weight:bold;color:#1a5fa8;margin-top:20px;text-align:right;}</style>
+  </head><body>
+  <h1>BankOfLion — Fatura do Cartão</h1>
+  <p><strong>Titular:</strong> ${u.nome} | <strong>Cartão:</strong> ${c.numero} | <strong>Validade:</strong> ${c.vencimento}</p>
+  <p><strong>Limite total:</strong> ${fmtMoney(c.limite)} | <strong>Disponível:</strong> ${fmtMoney(c.limite - c.usado)}</p>
+  <table><thead><tr><th>Data</th><th>Descrição</th><th>Valor</th></tr></thead><tbody>${rows}</tbody></table>
+  <p class="total">Total da fatura: ${fmtMoney(c.usado)}</p>
+  <p style="margin-top:24px;font-size:12px;color:#888;">* Esta fatura é de uma conta demonstrativa. Dados fictícios para fins de teste.</p>
+  </body></html>`;
+  const blob = new Blob([html], { type:'text/html' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'fatura-bankoflion.html';
+  a.click();
+  showToast('📥 Fatura baixada com sucesso!', 'success');
+}
+
+// Init
+document.getElementById('loginCpf').oninput = function() { maskCPF(this); };
+document.getElementById('regCpf').oninput = function() { maskCPF(this); };
+
+// Keyboard navigation
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { /* close modals if any */ }
+});
+</script>
+</body>
+</html>
